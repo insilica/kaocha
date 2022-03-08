@@ -31,7 +31,7 @@
    [nil  "--print-config"       "Print out the fully merged and normalized config, then exit."]
    [nil  "--print-test-plan"    "Load tests, build up a test plan, then print out the test plan and exit."]
    [nil  "--print-result"       "Print the test result map as returned by the Kaocha API."]
-   [nil  "--fail-fast"          "Stop testing after the first failure."]
+   [nil  "--[no-]fail-fast"     "Stop testing after the first failure."]
    [nil  "--[no-]color"         "Enable/disable ANSI color codes in output. Defaults to true."]
    [nil  "--[no-]watch"         "Watch filesystem for changes and re-run tests."]
    [nil  "--reporter SYMBOL"    "Change the test reporter, can be specified multiple times."
@@ -127,7 +127,7 @@
         (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255))
 
       :else
-      (do
+      (with-bindings (config/binding-map config)
         (plugin/run-hook :kaocha.hooks/main config)
         (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
               totals (result/totals (:kaocha.result/tests result))]
@@ -187,4 +187,25 @@
    (System/exit (apply -main* args))
    (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
      (shutdown-agents)
+     (System/exit exit-code))))
+
+(defn exec-fn
+  "Entry point for use with deps.tools' -X feature."
+  [m]
+  (try+
+   (let [config (-> (config/load-config)
+                    (config/merge-config (config/normalize m)))]
+     (if (:kaocha/watch? config)
+       (let [[exit-code finish!] ((jit kaocha.watch/run) config)]
+         (System/exit @exit-code))
+
+       (plugin/with-plugins (plugin/load-all (:kaocha/plugins config))
+         (let [config (plugin/run-hook :kaocha.hooks/config config)]
+           (with-bindings (config/binding-map config)
+             (plugin/run-hook :kaocha.hooks/main config)
+             (let [result (plugin/run-hook :kaocha.hooks/post-summary (api/run config))
+                   totals (result/totals (:kaocha.result/tests result))
+                   exit-code (min (+ (:kaocha.result/error totals) (:kaocha.result/fail totals)) 255)]
+               (System/exit exit-code)))))))
+   (catch :kaocha/early-exit {exit-code :kaocha/early-exit}
      (System/exit exit-code))))

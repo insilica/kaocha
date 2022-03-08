@@ -4,6 +4,86 @@
 
 ## Fixed
 
+## Changed
+
+# 1.63.998 (2022-02-15 / ae54f2b)
+
+## Changed
+
+- Version bumps of spec, expound, test.check
+
+## Fixed
+
+- Catch an exception in the notifier plugin which can occur in headless (CI)
+  setups
+
+# 1.62.993 (2022-02-04 / 083f69e)
+
+## Added
+
+- Added configuration `:kaocha.watch/type` which takes either `:beholder` or
+  `:hawk` as values. Defaulting to `:beholder` as the new fs watcher.
+- Add `--no-fail-fast` CLI option
+
+## Fixed
+
+## Changed
+
+- Changed default watcher to [Beholder](https://github.com/nextjournal/beholder)
+  which supports OSX/m1 machines natively. Hawk is now deprecated and will be
+  removed in a future release.
+
+# 1.60.977 (2022-01-01 / 4a6ed21)
+
+## Added
+
+- Add support for `:watch?` when using `exec-fn`
+
+# 1.60.972 (2021-12-16 / af118c8)
+
+## Fixed
+
+- Fixed an issue where the combination of a load error and using `--focus` would
+  result in "no tests found", shadowing the actual error
+
+# 1.60.945 (2021-10-24 / 7ed5dd8)
+
+## Fixed
+
+- Apply `:kaocha/bindings` higher in the stack, so they are visible to `main`
+  and `post-summary` plugin hooks
+- Fix an issue when the history track reporter gets invoked outside of the scope
+  where the history tracking atom is bound
+- Fixed issue in `gc-profiling` that caused itermittent `NullPointerException`s
+
+# 1.0.937 (2021-10-20 / 8ccaba7)
+
+## Added
+
+- `kaocha.runner/exec` for use with Clojure CLI's -X feature
+- Added `gc-profiling` plugin for measuring the memory usage of tests.
+
+## Fixed
+
+- Breaking! Unqualified plugin names containing dots are no longer
+  normalized to contain the `kaocha.plugin`-namespace in front.
+
+# 1.0.902 (2021-10-01 / 3100c8b)
+
+## Added
+
+- Added support for code using `:as-alias`
+
+## Fixed
+
+- Fix only considering public vars when building up the test plan
+
+# 1.0.887 (2021-09-01 / 38470aa)
+
+## Added
+
+## Fixed
+
 - Fix load-error handling in `kaocha.watch`
 - Fix `could not resolve symbol require` error that occured sporadically when requiring certain kaocha namespaces.
 - Fix printing of boolean options in the print-invocations plugin

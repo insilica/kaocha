@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>lambdaisland</groupId>
   <artifactId>kaocha</artifactId>
-  <version>1.0.861</version>
+  <version>1.63.998</version>
   <name>kaocha</name>
   <description>Full featured next generation test runner for Clojure.</description>
   <url>https://github.com/lambdaisland/kaocha</url>
@@ -12,6 +12,9 @@
     <name>Lambda Island</name>
     <url>https://lambdaisland.com</url>
   </organization>
+  <properties>
+    <project class="build sourceEncoding">UTF-8</project>
+  </properties>
   <licenses>
     <license>
       <name>Eclipse Public License 1.0</name>
@@ -22,28 +25,28 @@
     <url>https://github.com/lambdaisland/kaocha</url>
     <connection>scm:git:git://github.com/lambdaisland/kaocha.git</connection>
     <developerConnection>scm:git:ssh://git@github.com/lambdaisland/kaocha.git</developerConnection>
-    <tag>6b9f64007e2008559863c7673adc5a002f41da25</tag>
+    <tag>7228fe6a8713338a2e7be6c27ba8619b59c8f061</tag>
   </scm>
   <dependencies>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>clojure</artifactId>
-      <version>1.10.1</version>
+      <version>1.10.3</version>
     </dependency>
     <dependency>
       <groupId>expound</groupId>
       <artifactId>expound</artifactId>
-      <version>0.8.5</version>
+      <version>0.9.0</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>spec.alpha</artifactId>
-      <version>0.2.187</version>
+      <version>0.3.218</version>
     </dependency>
     <dependency>
       <groupId>org.clojure</groupId>
       <artifactId>tools.cli</artifactId>
-      <version>1.0.194</version>
+      <version>1.0.206</version>
     </dependency>
     <dependency>
       <groupId>lambdaisland</groupId>
@@ -56,6 +59,11 @@
       <version>0.12.2</version>
     </dependency>
     <dependency>
+      <groupId>com.nextjournal</groupId>
+      <artifactId>beholder</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+    <dependency>
       <groupId>aero</groupId>
       <artifactId>aero</artifactId>
       <version>1.1.6</version>
@@ -63,17 +71,12 @@
     <dependency>
       <groupId>lambdaisland</groupId>
       <artifactId>tools.namespace</artifactId>
-      <version>0.0-237</version>
+      <version>0.1.247</version>
     </dependency>
     <dependency>
       <groupId>progrock</groupId>
       <artifactId>progrock</artifactId>
       <version>0.1.2</version>
-    </dependency>
-    <dependency>
-      <groupId>orchestra</groupId>
-      <artifactId>orchestra</artifactId>
-      <version>2020.07.12-1</version>
     </dependency>
     <dependency>
       <groupId>org.tcrawley</groupId>
@@ -106,6 +109,10 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.8.1</version>
+        <configuration>
+          <source>1.8</source>
+          <target>1.8</target>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -114,7 +121,7 @@
         <configuration>
           <archive>
             <manifestEntries>
-              <git-revision>6b9f64007e2008559863c7673adc5a002f41da25</git-revision>
+              <git-revision>7228fe6a8713338a2e7be6c27ba8619b59c8f061</git-revision>
             </manifestEntries>
           </archive>
         </configuration>

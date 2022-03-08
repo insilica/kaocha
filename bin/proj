@@ -1,14 +1,14 @@
-#!bin/bb
+#!/usr/bin/env bb
 
 (ns proj (:require [lioss.main :as lioss]
                    [lioss.subshell :as subshell]
                    [clojure.java.io :as io]
                    [clojure.string :as str]
-                   [lioss.release :as release]))
+                   [lioss.version :as version]))
 
 (defn update-docs [opts]
   (doseq [file (filter #(str/ends-with? % ".md") (file-seq (io/file "doc")))]
-    (release/update-versions-in file (:module-versions opts)))
+    (version/update-versions-in file (:module-versions opts)))
   (subshell/spawn "sh" "-c" "ed < bin/update_toc.ed")
   opts)
 
@@ -22,7 +22,8 @@
   :group-id         "lambdaisland"
   :commands         ["update-docs"
                      {:description "Update the ToC and version strings in md files"
-                      :command     update-docs}]})
+                      :command     update-docs}]
+  :aliases-as-optional-deps [:test]})
 
 
 ;; Local Variables:
