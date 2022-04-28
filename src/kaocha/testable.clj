@@ -1,7 +1,6 @@
 (ns kaocha.testable
   (:refer-clojure :exclude [load])
   (:require [clojure.java.io :as io]
-            [clojure.pprint :as pprint]
             [clojure.spec.alpha :as s]
             [clojure.test :as t]
             [com.climate.claypoole :as cp]
@@ -12,10 +11,8 @@
             [kaocha.plugin :as plugin]
             [kaocha.result :as result]
             [kaocha.specs :refer [assert-spec]]
-            [kaocha.util :as util] 
-            [kaocha.hierarchy :as hierarchy])
-  (:import [clojure.lang Compiler$CompilerException]
-           [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
+            [kaocha.util :as util])
+  (:import [java.util.concurrent ArrayBlockingQueue BlockingQueue]))
 
 (def ^:dynamic *fail-fast?*
   "Should testing terminate immediately upon failure or error?"
@@ -279,24 +276,28 @@
   "Run a collection of testables, returning a result collection."
   [testables test-plan]
   (let [num-threads (or (:parallel-threads *config*) (* 2 (inc (cp/ncpus))))
-        types (set (:parallel-children-exclude *config*))]
-    (cp/with-shutdown! [pool (cp/threadpool num-threads :name "kaocha-test-runner")]
-      (doall
-       (cp/pmap
-        pool
-        #(binding [*config*
-                   (cond-> *config*
-                     (contains? types (:kaocha.testable/type %)) (dissoc :parallel)
-                     true (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
-           (run-testable % test-plan))
-        testables)))))
+        pred #(= :kaocha.type/ns (:kaocha.testable/type %))
+        nses (seq (filter pred testables))
+        others (seq (remove pred testables))]
+    (concat
+     (when others (run-testables-serial others test-plan))
+     (when nses
+       (cp/with-shutdown! [pool (cp/threadpool num-threads :name "kaocha-test-runner")]
+         (doall
+          (cp/pmap
+            pool
+            #(binding [*config*
+                       (-> *config*
+                           (dissoc :parallel)
+                           (update :levels (fn [x] (if (nil? x) 1 (inc x)))))]
+               (run-testable % test-plan))
+            nses)))))))
 
 (defn run-testables 
   [testables test-plan]
   (if (:parallel *config*)
-    (doall (run-testables-parallel testables test-plan))
+    (run-testables-parallel testables test-plan)
     (run-testables-serial testables test-plan)))
-
 
 (defn test-seq [testable]
   (cond->> (mapcat test-seq (remove ::skip (or (:kaocha/tests testable)
